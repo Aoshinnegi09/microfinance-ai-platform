@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: microfinance
+      POSTGRES_PASSWORD: microfinance
+      POSTGRES_DB: microfinance
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+
+  ai-engine:
+    build: ./ai-engine
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "5001:5001"
+
+  backend:
+    build: ./backend
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: microfinance
+      POSTGRES_PASSWORD: microfinance
+      POSTGRES_DB: microfinance
+      JWT_SECRET: replace_with_strong_secret
+      AI_ENGINE_URL: http://ai-engine:5001
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - ./backend/uploads:/app/uploads
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - ai-engine
+
+  payment-processor:
+    build: ./payment-processor
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: microfinance
+      POSTGRES_PASSWORD: microfinance
+      POSTGRES_DB: microfinance
+    ports:
+      - "5002:5002"
+    depends_on:
+      - db
+
+  mobile-app:
+    build: ./mobile-app
+    environment:
+      VITE_BACKEND_URL: http://localhost:5000
+      VITE_PAYMENT_URL: http://localhost:5002
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+      - payment-processor
+
+volumes:
+  pg_data:
