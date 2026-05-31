@@ -1,50 +1,79 @@
 # AI-Powered Microfinance Bank Platform
 
-A modern AI-driven microfinance system that enables instant loan approvals for underserved populations using intelligent credit scoring and risk assessment.
+Production-oriented multi-service platform implementing:
 
-## 🎯 Project Overview
+- **Backend API** (Flask + JWT + SQLAlchemy)
+- **AI Credit Scoring Engine** (Flask + XGBoost + 120 engineered features)
+- **Payment Processor** (Flask EMI/disbursement/payment workflows)
+- **Mobile Web App** (React + responsive dashboards/forms)
+- **Docker Compose** local deployment with PostgreSQL
 
-### What is a Microfinance Bank?
+## Services
 
-A microfinance bank provides:
-- Small loans (₹100 - ₹50,000) to poor people and small business owners
-- No collateral requirement
-- Instant/same-day approval
-- Higher interest rates (due to higher risk)
+| Service | Port | Key Endpoints |
+|---|---:|---|
+| backend | 5000 | `/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/loans/apply`, `/api/v1/loans/{id}`, `/api/v1/kyc/submit`, `/api/v1/documents/upload` |
+| ai-engine | 5001 | `/api/v1/score`, `/api/v1/predict-approval`, `/api/v1/calculate-interest-rate`, `/api/v1/calculate-loan-amount` |
+| payment-processor | 5002 | `/api/v1/payments/initiate`, `/api/v1/disbursement/initiate`, `/api/v1/payments/{id}`, `/api/v1/emi/schedule` |
+| mobile-app | 5173 | Responsive UI for auth, loans, KYC, docs, status, repayment |
 
-### Why AI-Powered?
+## Quick Start (Docker)
 
-Instead of human loan officers:
-- ✅ Instant decisions (5 seconds vs 1 week)
-- ✅ Unbiased decisions (data-driven)
-- ✅ Checks 100+ data points
-- ✅ Accessible to underserved populations
+```bash
+cp .env.example .env
+docker compose up --build
+```
 
-## 🏗️ Architecture Overview
+Open `http://localhost:5173` for the UI.
 
-Backend → AI Engine → Payment Processing → Database
+## Local Development (without Docker)
 
-## 📁 Project Structure
+### Backend
+```bash
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m app.app
+```
 
-- backend/ - Backend API
-- ai-engine/ - AI Credit Scoring  
-- mobile-app/ - Mobile Application
-- payment-processor/ - Payment Processing
-- docs/ - Documentation
+### AI Engine
+```bash
+cd ai-engine
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m app.app
+```
 
-## 📋 Features
+### Payment Processor
+```bash
+cd payment-processor
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m app.app
+```
 
-- AI Credit Scoring with 100+ data points
-- KYC Module
-- Loan Management
-- Payment Processing
-- Real-time Dashboard
-- Repayment Predictions
+### Mobile App
+```bash
+cd mobile-app
+npm install
+npm run dev
+```
 
-## 🔒 Note
+## Database Schema
 
-This is a prototype/MVP for portfolio purposes.
+`db-init/01_schema.sql` initializes:
+- users
+- loans
+- applications
+- payments
+- documents
+- kyc_records
 
-## 📄 License
+## Testing
 
-MIT License
+```bash
+cd backend && pytest
+cd ai-engine && pytest
+cd payment-processor && pytest
+cd mobile-app && npm run build
+```

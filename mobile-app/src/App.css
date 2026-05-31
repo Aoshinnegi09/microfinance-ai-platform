@@ -1,0 +1,98 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f4f7fb;
+  color: #111827;
+}
+
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.hint {
+  color: #475569;
+}
+
+.message {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 7%);
+}
+
+.grid {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.two-col {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.three-col {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+input,
+button {
+  padding: 0.65rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  border: none;
+}
+
+button.text {
+  background: transparent;
+  color: #2563eb;
+  border: none;
+  padding-left: 0;
+}
+
+.table-wrap {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.4rem;
+  text-align: left;
+}
+
+.status {
+  margin-top: 0.8rem;
+  background: #eff6ff;
+  padding: 0.7rem;
+  border-radius: 8px;
+}
