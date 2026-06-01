@@ -5,8 +5,8 @@ services:
       POSTGRES_USER: microfinance
       POSTGRES_PASSWORD: microfinance
       POSTGRES_DB: microfinance
-    ports:
-      - "5432:5432"
+   ports:
+     - "5433:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d
