@@ -1,12 +1,33 @@
 import logging
+import time
 from pathlib import Path
 
 from flask import Flask, jsonify
 from flask_cors import CORS
+from sqlalchemy.exc import OperationalError
 
 from . import auth, routes
 from .config import Config
 from .models import db
+
+
+def _init_db_with_retry(app: Flask, retries: int = 10, delay_seconds: int = 2) -> None:
+    with app.app_context():
+        for attempt in range(1, retries + 1):
+            try:
+                db.create_all()
+                return
+            except OperationalError as error:
+                if attempt == retries:
+                    raise
+                app.logger.warning(
+                    "Database not ready (attempt %s/%s): %s. Retrying in %ss...",
+                    attempt,
+                    retries,
+                    error,
+                    delay_seconds,
+                )
+                time.sleep(delay_seconds)
 
 
 def create_app(config_class=Config):
@@ -19,8 +40,7 @@ def create_app(config_class=Config):
 
     db.init_app(app)
 
-    with app.app_context():
-        db.create_all()
+    _init_db_with_retry(app)
 
     auth.register_routes(app)
     routes.register_routes(app)
