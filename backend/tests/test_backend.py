@@ -2,11 +2,12 @@ import io
 import os
 
 import pytest
+from sqlalchemy.exc import OperationalError
 
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ["AI_ENGINE_URL"] = "http://localhost:5999"
 
-from app.app import create_app  # noqa: E402
+from app.app import _init_db_with_retry, create_app  # noqa: E402
 from app.models import db  # noqa: E402
 
 
@@ -73,3 +74,19 @@ def test_kyc_and_document_upload(client):
     data = {"doc_type": "id_card", "file": (io.BytesIO(b"x"), "id.png")}
     doc = client.post("/api/v1/documents/upload", headers=headers, content_type="multipart/form-data", data=data)
     assert doc.status_code == 201
+
+
+def test_db_init_retries_on_temporary_operational_error(monkeypatch):
+    app = create_app()
+    calls = {"count": 0}
+
+    def flaky_create_all():
+        calls["count"] += 1
+        if calls["count"] == 1:
+            raise OperationalError(statement="SELECT 1", params=None, orig=Exception("temporary failure"))
+
+    monkeypatch.setattr("app.app.db.create_all", flaky_create_all)
+    monkeypatch.setattr("app.app.time.sleep", lambda *_: None)
+
+    _init_db_with_retry(app, retries=2, delay_seconds=0)
+    assert calls["count"] == 2
