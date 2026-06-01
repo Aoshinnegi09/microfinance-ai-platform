@@ -83,7 +83,7 @@ def test_db_init_retries_on_temporary_operational_error(monkeypatch):
     def flaky_create_all():
         calls["count"] += 1
         if calls["count"] == 1:
-            raise OperationalError("SELECT 1", {}, Exception("temporary failure"))
+            raise OperationalError(statement="SELECT 1", params=None, orig=Exception("temporary failure"))
 
     monkeypatch.setattr("app.app.db.create_all", flaky_create_all)
     monkeypatch.setattr("app.app.time.sleep", lambda *_: None)

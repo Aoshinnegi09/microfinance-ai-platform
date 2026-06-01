@@ -12,6 +12,7 @@ from .models import db
 
 
 def _init_db_with_retry(app: Flask, retries: int = 10, delay_seconds: int = 2) -> None:
+    """Initialize DB tables, retrying on transient OperationalError failures."""
     with app.app_context():
         for attempt in range(1, retries + 1):
             try:
